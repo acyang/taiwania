@@ -1,15 +1,14 @@
 #!/bin/bash
 
 ### Synchronize Time with NTP to make sure TOTP works.
-#ntpdate -s time.stdtime.gov.tw
+### sudo zypper in ntp to get ntpdate
+#sudo ntpdate -s time.stdtime.gov.tw
 
 echo "Select which server you want to login:"
 echo "a): Taiwania  clogin1  140.110.148.11"
 echo "b): Taiwania  clogin2  140.110.148.12"
-echo "c): Taiwania  glogin1  140.110.148.15"
-echo "d): Taiwania  glogin2  140.110.148.16"
-echo "e): Taiwania2  login1  203.145.219.98"
-echo "f): Taiwania2  login2 203.145.219.100"
+echo "c): Taiwania2  login1  203.145.219.98"
+echo "d): Taiwania2  login2 203.145.219.100"
 read -p "Input your choice: " choice
 case ${choice} in
   "a")
@@ -21,18 +20,10 @@ case ${choice} in
     echo "Your selection is Taiwania  clogin2  140.110.148.12"
     ;;
   "c")
-    address="140.110.148.15"
-    echo "Your selection is Taiwania  glogin1  140.110.148.15"
-    ;;
-  "d")
-    address="140.110.148.16"
-    echo "Your selection is Taiwania  glogin2  140.110.148.16"
-    ;;
-  "e")
     address="203.145.219.98"
     echo "Your selection is Taiwania2  login1  203.145.219.98"
     ;;
-  "f")
+  "d")
     address="203.145.219.100"
     echo "Your selection is Taiwania2  login2 203.145.219.100"
     ;;
@@ -53,12 +44,17 @@ read -p "Input your secretkey: " secretkey
 
 ### Make sure you have oathtool installed in your system.
 ### The following cmd is for oathtool 2.4.1
+### sudo zypper in oath-toolkit
 totp=`oathtool --totp --base32 ${secretkey}`
 echo ${totp}
 
+### Make sure you have sshpass installed in your system.
+### sudo zypper in sshpass
 export SSHPASS=${password}${totp}
 #echo $SSHPASS
 
-echo "sshpass -e ssh -X ${username}"@"${address}"
-sshpass -e ssh -X ${username}"@"${address}
+### Use -o "StrictHostKeyChecking no" to avoid prompte
+### Make sure your openssh version is higer than 7.6
+echo "sshpass -e ssh -X -o "StrictHostKeyChecking no" ${username}"@"${address}"
+sshpass -e ssh -X -o "StrictHostKeyChecking no" ${username}"@"${address}
 unset SSHPASS
