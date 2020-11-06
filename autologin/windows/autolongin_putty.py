@@ -16,7 +16,7 @@ import pyotp
 import subprocess
 import getpass
 import time
-totp = pyotp.TOTP("CBUPKACCSXQS7GLI5AH72QCG4VJYJRGKUDMW5TL4YGW7X5XEE7BQ====")
+totp = pyotp.TOTP("YOUR_OTP_PRIVATE_KEY")
 current_otp=totp.now()
 print("Current OTP:", totp.now())
 
